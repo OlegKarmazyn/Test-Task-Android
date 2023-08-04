@@ -27,7 +27,7 @@ class CounterFragment : Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back)
         toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
+            goBackToActivity()
         }
 
         fragmentButton.setOnClickListener {
@@ -36,6 +36,12 @@ class CounterFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun goBackToActivity() {
+        val parentActivity = activity as? MainActivity
+        parentActivity?.updateActivityClickCount(clickCount)
+        parentFragmentManager.popBackStack()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
