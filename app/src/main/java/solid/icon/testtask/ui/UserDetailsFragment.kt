@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import solid.icon.testtask.R
-import solid.icon.testtask.data.User
+import solid.icon.testtask.data.database.User
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class UserDetailsFragment : Fragment() {
 
@@ -42,10 +44,12 @@ class UserDetailsFragment : Fragment() {
         val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         val ageTextView: TextView = view.findViewById(R.id.ageTextView)
         val studentTextView: TextView = view.findViewById(R.id.studentTextView)
+        val birthTextView: TextView = view.findViewById(R.id.birthTextView)
 
         nameTextView.text = user.name
         ageTextView.text = user.age.toString()
-        studentTextView.text = "Is Student: ${if (user.isStudent) "Yes" else "No"}"
+        studentTextView.text = if (user.isStudent) "Yes" else "No"
+        birthTextView.text = getBirthText(user.dateOfBirth)
 
         view.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
@@ -53,5 +57,8 @@ class UserDetailsFragment : Fragment() {
 
         return view
     }
-}
 
+    private fun getBirthText(dateOfBirth: LocalDate) : String{
+        return dateOfBirth.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    }
+}

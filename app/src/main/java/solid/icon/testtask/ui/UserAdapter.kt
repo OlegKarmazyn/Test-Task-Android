@@ -1,6 +1,5 @@
 package solid.icon.testtask.ui
 
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,13 +7,12 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import solid.icon.testtask.R
-import solid.icon.testtask.data.OnItemClickListener
-import solid.icon.testtask.data.User
+import solid.icon.testtask.data.database.User
+import solid.icon.testtask.data.interfaces.OnItemClickListener
 
 class UserAdapter(
     private val itemClickListener: OnItemClickListener,
-    private val sharedPreferences: SharedPreferences,
-    private val users: List<User>
+    var userList: List<User>
 ) :
     RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
@@ -25,14 +23,14 @@ class UserAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val user = users[position]
+        val user = userList[position]
         holder.bind(user)
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(user)
         }
     }
 
-    override fun getItemCount(): Int = users.size
+    override fun getItemCount(): Int = userList.size
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -46,15 +44,14 @@ class UserAdapter(
             studentSwitch.isChecked = user.isStudent
 
             studentSwitch.setOnCheckedChangeListener { _, isChecked ->
-                saveUserState(adapterPosition, isChecked)
+                if (user.isStudent != isChecked)
+                    updateUserState(user, isChecked)
             }
         }
     }
 
-    fun saveUserState(position: Int, isChecked: Boolean) {
-        val sharedKey = MainActivity.getStateKey(position)
-        sharedPreferences.edit()
-            .putBoolean(sharedKey, isChecked)
-            .apply()
+    fun updateUserState(user: User, isChecked: Boolean) {
+        user.isStudent = isChecked
+        itemClickListener.updateUserState(user)
     }
 }
