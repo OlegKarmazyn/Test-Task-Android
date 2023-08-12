@@ -1,10 +1,7 @@
 package solid.icon.testtask.data.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface UserDao {
@@ -14,4 +11,7 @@ interface UserDao {
 
     @Query("SELECT * FROM users")
     fun getUsers(): LiveData<List<User>>
+
+    @Delete
+    suspend fun delete(user: User)
 }

@@ -15,6 +15,10 @@ import solid.icon.testtask.R
 import solid.icon.testtask.data.database.User
 import solid.icon.testtask.data.interfaces.OnItemClickListener
 import solid.icon.testtask.data.repository.MainViewModel
+import solid.icon.testtask.ui.dialogs.DeleteDialog
+import solid.icon.testtask.ui.dialogs.SortDialog
+import solid.icon.testtask.ui.fragments.UserDetailsFragment
+import solid.icon.testtask.ui.fragments.UserInputFragment
 
 class MainActivity : AppCompatActivity(), KodeinAware, OnItemClickListener {
 
@@ -63,6 +67,10 @@ class MainActivity : AppCompatActivity(), KodeinAware, OnItemClickListener {
             Toasty.error(this, "Fill all fields").show()
     }
 
+    override fun ondUserDelete(user: User) {
+        openDeletingDialog(user)
+    }
+
     override fun updateUserState(user: User) {
         viewModel.changeUserState(user)
     }
@@ -76,6 +84,37 @@ class MainActivity : AppCompatActivity(), KodeinAware, OnItemClickListener {
             .commit()
     }
 
+    private fun openSortingDialog() {
+        val dialog = SortDialog(this)
+
+        dialog.setSortByNameButton {
+            viewModel.sortStatus.value = MainViewModel.SortStatus.SortByName
+        }
+
+        dialog.setSortByAgeButton {
+            viewModel.sortStatus.value = MainViewModel.SortStatus.SortByAge
+        }
+
+        dialog.setSortByStatusButton {
+            viewModel.sortStatus.value = MainViewModel.SortStatus.SortByStatus
+        }
+
+        dialog.show()
+    }
+
+    private fun openDeletingDialog(user: User) {
+        val dialog = DeleteDialog(this)
+        dialog.setPositiveButton(R.string.yes) {
+            viewModel.deleteUser(user)
+            Toasty.success(this, "User deleted successfully").show()
+        }
+        dialog.setNegativeButton(R.string.no) {
+            //nothing (only close dialog)
+            Toasty.info(this, "Menu was closed").show()
+        }
+        dialog.show()
+    }
+
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar, menu)
         return super.onPrepareOptionsMenu(menu)
@@ -84,6 +123,7 @@ class MainActivity : AppCompatActivity(), KodeinAware, OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.addUser -> openAddingComponent()
+            R.id.sortUser -> openSortingDialog()
         }
         return super.onOptionsItemSelected(item)
     }

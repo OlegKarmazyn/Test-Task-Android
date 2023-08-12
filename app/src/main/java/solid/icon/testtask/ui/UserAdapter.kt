@@ -28,6 +28,10 @@ class UserAdapter(
         holder.itemView.setOnClickListener {
             itemClickListener.onItemClick(user)
         }
+        holder.itemView.setOnLongClickListener {
+            itemClickListener.ondUserDelete(user)
+            true
+        }
     }
 
     override fun getItemCount(): Int = userList.size
@@ -39,6 +43,8 @@ class UserAdapter(
         private val studentSwitch: SwitchCompat = itemView.findViewById(R.id.studentSwitch)
 
         fun bind(user: User) {
+            studentSwitch.setOnCheckedChangeListener(null)
+
             nameTextView.text = user.name
             ageTextView.text = user.age.toString()
             studentSwitch.isChecked = user.isStudent
@@ -46,6 +52,7 @@ class UserAdapter(
             studentSwitch.setOnCheckedChangeListener { _, isChecked ->
                 if (user.isStudent != isChecked)
                     updateUserState(user, isChecked)
+                studentSwitch.setOnCheckedChangeListener(null)
             }
         }
     }
